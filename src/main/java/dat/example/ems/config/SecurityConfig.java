@@ -2,6 +2,7 @@ package dat.example.ems.config;
 
 import dat.example.ems.service.EmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -17,7 +18,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.authentication.AuthenticationFailureHandler;
+
 
 @Configuration
 @EnableWebSecurity
@@ -29,47 +30,40 @@ public class SecurityConfig {
     private JWTAuthFIlter jwtAuthFIlter;
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
-        httpSecurity.csrf(AbstractHttpConfigurer::disable)
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http.csrf(AbstractHttpConfigurer::disable)
                 .cors(Customizer.withDefaults())
-                .authorizeHttpRequests(request -> request.requestMatchers("/auth/**", "/public/**").permitAll()
-                		.requestMatchers("signin.xhtml").permitAll()
-                        .requestMatchers("/admin/**").hasAnyAuthority("ADMIN")
-                        .requestMatchers("/user/**").hasAnyAuthority("USER")
-                        .requestMatchers("/adminuser/**").hasAnyAuthority("USER", "ADMIN")
-                        .anyRequest().authenticated())
+                .authorizeHttpRequests(
+                		request -> request
+                		.requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll() // Allow access to static resources
+                		.requestMatchers("/login.xhtml").permitAll()
+                		.requestMatchers("/javax.faces.resource/**").permitAll()// Allow JSF resources
+                        .anyRequest().authenticated()
+                        )
                 .exceptionHandling(
                         (exceptionHandling) -> exceptionHandling
-                                .accessDeniedPage("/accessDenied")
+                        .accessDeniedPage("/accessDenied")
                 )
                 .formLogin(form -> form
-                                .loginPage("/login")
-                                .loginProcessingUrl("/signIn")
-                                .defaultSuccessUrl("/dashboard")
-                                .successHandler(
-                                        (((request, response, authentication) -> {
-                                            response.sendRedirect("/dashboard");
-                                        }))
-                                )
-                                .failureHandler(authenticationFailureHandler()) // use custom authentication failure handler
-                                .permitAll()
+                        .loginPage("/login.xhtml")
+                        .defaultSuccessUrl("/dashboard.xhtml")
+                        .failureUrl("/login?error")
+                        .permitAll()
                 ).logout(
                         logout -> logout
-                                .logoutUrl("/signOut")
-                                .logoutSuccessUrl("/login")
-                                .logoutSuccessHandler(
-                                        (((request, response, authentication) -> {
-                                            response.sendRedirect("/login");
-                                        }))
-                                )
-                                .invalidateHttpSession(true)
-                                .permitAll()
+                        .logoutUrl("/logout")
+                        .logoutSuccessUrl("/login.xhtml")
+                        .invalidateHttpSession(true)
+                        .permitAll()
                 )
-                .sessionManagement(manager -> manager.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authenticationProvider(authenticationProvider()).addFilterBefore(
-                        jwtAuthFIlter, UsernamePasswordAuthenticationFilter.class
-                );
-        return httpSecurity.build();
+                .sessionManagement(
+                		manager -> manager
+        				.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+				)
+                .authenticationProvider(authenticationProvider())
+                .addFilterBefore(jwtAuthFIlter, UsernamePasswordAuthenticationFilter.class
+);
+        return http.build();
     }
     
 
@@ -79,14 +73,6 @@ public class SecurityConfig {
         daoAuthenticationProvider.setUserDetailsService(employeeService);
         daoAuthenticationProvider.setPasswordEncoder(passwordEncoder());
         return daoAuthenticationProvider;
-    }
-    
-    @Bean
-    public AuthenticationFailureHandler authenticationFailureHandler() {
-        return (request, response, exception) -> {
-            request.getSession().setAttribute("errorMessage", exception.getMessage());
-            response.sendRedirect("/login?error");
-        };
     }
 
     @Bean

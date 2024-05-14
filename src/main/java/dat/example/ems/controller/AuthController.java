@@ -1,67 +1,40 @@
 package dat.example.ems.controller;
 
-import java.io.Serializable;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.SessionScoped;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.PostMapping;
+import dat.example.ems.model.ReqRes;
+import dat.example.ems.service.AuthService;
 
 @Controller
-@RequestMapping("/auth")
-public class AuthController implements Serializable {
+@ManagedBean(name = "authController")
+@SessionScoped
+public class AuthController {
+	 
+  @Autowired 
+  private AuthService authService;
+		 
+  private String username;
+  private String password;
 
-	private static final long serialVersionUID = 1094801825228386363L;
+  // Getters and setters for username and password properties
 
-	@Autowired
-	private AuthenticationManager authenticationManager;
-
-	private String username;
-	private String password;
-
-	public String getUsername() {
-		return username;
-	}
-
-	public void setUsername(String username) {
-		this.username = username;
-	}
-
-	public String getPassword() {
-		return password;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
-	}
-
-	/*
-	 * @PostMapping("/signin") public ResponseEntity<ReqRes> signIn(@RequestBody
-	 * ReqRes signInRequest){ return
-	 * ResponseEntity.ok(authService.signIn(signInRequest)); }
-	 * 
-	 */
-    public String signIn(@RequestParam("username") String username, 
-			            @RequestParam("password") String password,
-			            Model model) {
-        Authentication authentication = new UsernamePasswordAuthenticationToken(username, password);
-        try {
-            Authentication authenticatedUser = authenticationManager.authenticate(authentication);
-
-            if (authenticatedUser.isAuthenticated()) {
-                SecurityContextHolder.getContext().setAuthentication(authenticatedUser);
-                return "redirect:/dashboard"; 
-            }
-        } catch (AuthenticationException e) {
-            return "redirect:/login?error=true"; 
-        }
-        return "redirect:/login?error=true";
-    }
-	
+  @PostMapping("/signin")
+  public String signIn() {
+    ReqRes signInRequest = new ReqRes(); // Create signInRequest object
+    signInRequest.setUsername(username); // Set username from the form
+    signInRequest.setPassword(password); // Set password from the form
+    ReqRes response = authService.signIn(signInRequest);
+    // Handle response as needed
+    return "index"; // Return the appropriate view name
+  }
 }
+
+/*
+ * @PostMapping("/signin") public ResponseEntity<ReqRes> signIn(@RequestBody
+ * ReqRes signInRequest) { ReqRes response = authService.signIn(signInRequest);
+ * return ResponseEntity.ok(response); }
+ */

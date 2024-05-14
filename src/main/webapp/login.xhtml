@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+<h:head>
+    <title>Sign In</title>
+    <h:outputStylesheet name="theme.css" library="primefaces-{your theme}" />
+</h:head>
+<h:body>
+    <h1>Sign In</h1>
+    <h:form id="signinForm">
+	    <h:panelGrid columns="2">
+	        <h:outputLabel for="username" value="Username:" />
+	        <p:inputText id="username" value="#{authController.username}" required="true" />
+	        <h:outputLabel for="password" value="Password:" />
+	        <p:password id="password" value="#{authController.password}" required="true" />
+	    </h:panelGrid>
+	    <p:commandButton value="Sign In" action="#{authController.signIn}" update="@form" />
+	</h:form>
+</h:body>
+</html>
+
