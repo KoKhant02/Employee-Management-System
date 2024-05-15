@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.javax.faces.org/jsf/html"
+      xmlns:f="http://xmlns.javax.faces.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+    <title>Edit Employee</title>
+</h:head>
+<h:body>
+    <h:form id="editEmployeeForm">
+        <h2>Edit Employee</h2>
+        <p>
+            <h:outputLabel for="name" value="name:" />
+            <h:inputText id="name" value="#{employeeController.employee.name}" required="true" />
+        </p>
+        <p>
+            <h:outputLabel for="email" value="Email:" />
+            <h:inputText id="email" value="#{employeeController.employee.email}" required="true" />
+        </p>
+        <p>
+            <h:outputLabel for="password" value="Password:" />
+            <h:inputSecret id="password" value="#{employeeController.employee.password}" required="true" />
+        </p>
+        <p>
+            <h:commandButton value="Save Changes" action="#{employeeController.saveEmployee}" />
+        </p>
+    </h:form>
+</h:body>
+</html>

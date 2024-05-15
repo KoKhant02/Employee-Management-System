@@ -2,78 +2,130 @@ package dat.example.ems.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import dat.example.ems.model.Department;
 import dat.example.ems.service.DepartmentService;
+import jakarta.annotation.PostConstruct;
 
+import java.io.IOException;
+import java.io.Serializable;
 import java.util.List;
+
+import javax.faces.application.FacesMessage;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.SessionScoped;
+import javax.faces.context.FacesContext;
 
 @RestController
 @RequestMapping("/departments")
-public class DepartmentController {
+@ManagedBean
+@SessionScoped
+public class DepartmentController  implements Serializable{
+
+	private static final long serialVersionUID = 1L;
+
 
     @Autowired
     private DepartmentService departmentService;
+    
+    private List<Department> allDepartments;
+    private Department department;
+    
+    public List<Department> getAllDepartments() {
+		return allDepartments;
+	}
 
-    @PostMapping
-    public ResponseEntity<String> createDepartment(@RequestBody Department department) {
-    	try {
-    		departmentService.createDepartment(department);
-            return new ResponseEntity<>("Department created successfully", HttpStatus.CREATED);
-    	} catch (DataIntegrityViolationException e) {
-    		String errorMessage = e.getMessage();
-    		if(errorMessage.contains("Duplicate entry")) {
-    			if (errorMessage.contains("Code")) {
-    				return new ResponseEntity<>("Code already exists", HttpStatus.CONFLICT);
-    			}else if(errorMessage.contains("Name")) {
-    				return new ResponseEntity<>("Department Name already exists", HttpStatus.CONFLICT);
-    			} else {
-                    return new ResponseEntity<>("Constraint violation occurred", HttpStatus.CONFLICT);
-                }
-    		} else {
-                return new ResponseEntity<>("Unknown constraint violation", HttpStatus.CONFLICT);
+	public void setAllDepartments(List<Department> allDepartments) {
+		this.allDepartments = allDepartments;
+	}
+
+	public Department getDepartment() {
+		return department;
+	}
+
+	public void setDepartment(Department department) {
+		this.department = department;
+	}
+
+	@PostConstruct
+    public void init() {
+        department = new Department();
+        refreshDepartmentList();
+    }
+
+    public void createDepartment() {
+        try {
+            departmentService.createDepartment(department);
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Success", "Department created successfully"));
+            refreshDepartmentList();
+            department = new Department(); // Clear the form after successful creation
+        } catch (DataIntegrityViolationException e) {
+            handleDuplicateEntryException(e);
+        } catch (Exception e) {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Failed to create department"));
+        }
+    }
+    
+    private void handleDuplicateEntryException(DataIntegrityViolationException e) {
+        String errorMessage = e.getMessage();
+        if (errorMessage.contains("Duplicate entry")) {
+            if (errorMessage.contains("Code")) {
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Code already exists"));
+            } else if (errorMessage.contains("Name")) {
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Department Name already exists"));
+            } else {
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Constraint violation occurred"));
             }
-    	}
-        
+        } else {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Unknown constraint violation"));
+        }
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<String> updateDepartment(@PathVariable int id, @RequestBody Department department) {
+    public void editDepartment(int id) {
         Department existingDepartment = departmentService.getDepartmentById(id);
         if (existingDepartment == null) {
-            return new ResponseEntity<>("Department not found", HttpStatus.NOT_FOUND);
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Department not found"));
+            return;
         }
-        department.setId(id);
+        try {
+            FacesContext.getCurrentInstance().getExternalContext().redirect("editdepartment.xhtml?id=" + id);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    
+    public void saveDepartment() {
         departmentService.updateDepartment(department);
-        return new ResponseEntity<>("Department updated successfully", HttpStatus.OK);
+        try {
+            FacesContext.getCurrentInstance().getExternalContext().redirect("dashboard.xhtml");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteDepartment(@PathVariable int id) {
-        Department existingDepartment = departmentService.getDepartmentById(id);
+    public void deleteDepartment(int id) {
+    	Department existingDepartment = departmentService.getDepartmentById(id);
         if (existingDepartment == null) {
-            return new ResponseEntity<>("Department not found", HttpStatus.NOT_FOUND);
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Department not found"));
+            return;
         }
-        departmentService.deleteDepartment(id);
-        return new ResponseEntity<>("Department deleted successfully", HttpStatus.OK);
+        try {
+            departmentService.deleteDepartment(id);
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Success", "Department deleted successfully"));
+            refreshDepartmentList();
+        } catch (Exception e) {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Failed to delete department"));
+        }
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Department> getDepartmentById(@PathVariable int id) {
-        Department department = departmentService.getDepartmentById(id);
-        if (department == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-        return new ResponseEntity<>(department, HttpStatus.OK);
+    private void refreshDepartmentList() {
+        allDepartments = departmentService.getAllDepartments();
     }
-
-    @GetMapping
-    public ResponseEntity<List<Department>> getAllDepartments() {
-        List<Department> departments = departmentService.getAllDepartments();
-        return new ResponseEntity<>(departments, HttpStatus.OK);
+    
+    public Department getDepartmentById(int id) {
+        return departmentService.getDepartmentById(id);
     }
+    
 }
 

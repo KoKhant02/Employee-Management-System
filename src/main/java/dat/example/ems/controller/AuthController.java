@@ -1,36 +1,70 @@
 package dat.example.ems.controller;
 
+import java.io.Serializable;
+
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
+import javax.inject.Named;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
+import dat.example.ems.model.Employee;
 import dat.example.ems.model.ReqRes;
 import dat.example.ems.service.AuthService;
+import jakarta.annotation.PostConstruct;
 
 @Controller
 @ManagedBean(name = "authController")
 @SessionScoped
-public class AuthController {
-	 
+public class AuthController implements Serializable{
+
+  private static final long serialVersionUID = 1L;
+
   @Autowired 
   private AuthService authService;
 		 
-  private String username;
-  private String password;
+  private Employee employee;
+  private String responseMessage;
 
-  // Getters and setters for username and password properties
+  	@PostConstruct
+  	public void init() {
+  		employee = new Employee();
+  	}
+  
+  	public Employee getEmployee() {
+  		return employee;
+	}
 
-  @PostMapping("/signin")
-  public String signIn() {
-    ReqRes signInRequest = new ReqRes(); // Create signInRequest object
-    signInRequest.setUsername(username); // Set username from the form
-    signInRequest.setPassword(password); // Set password from the form
-    ReqRes response = authService.signIn(signInRequest);
-    // Handle response as needed
-    return "index"; // Return the appropriate view name
-  }
+  	public void setEmployee(Employee employee) {
+  		this.employee = employee;
+  	}
+  	
+	public String getResponseMessage() {
+		return responseMessage;
+	}
+
+	public void setResponseMessage(String responseMessage) {
+		this.responseMessage = responseMessage;
+	}
+
+	public String signIn() {
+        ReqRes signInRequest = new ReqRes();
+        signInRequest.setUsername(employee.getUsername());
+        signInRequest.setPassword(employee.getPassword());
+        ReqRes response = authService.signIn(signInRequest);
+        if (response.isSuccess()) {
+            responseMessage = "Sign in successful"; // Or any success message
+            return "dashboard.xhtml"; // Redirect to the dashboard
+        } else {
+            responseMessage = "Sign in failed. Please try again."; 
+            return null; // Stay on the same page
+        }
+    }
+
+
+
+
+
 }
 
 /*

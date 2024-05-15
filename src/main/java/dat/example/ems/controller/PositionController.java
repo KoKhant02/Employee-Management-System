@@ -2,74 +2,125 @@ package dat.example.ems.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import dat.example.ems.model.Position;
 import dat.example.ems.service.PositionService;
+import jakarta.annotation.PostConstruct;
 
+import java.io.IOException;
+import java.io.Serializable;
 import java.util.List;
+
+import javax.faces.application.FacesMessage;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.SessionScoped;
+import javax.faces.context.FacesContext;
 
 @RestController
 @RequestMapping("/positions")
-public class PositionController {
+@ManagedBean
+@SessionScoped
+public class PositionController  implements Serializable{
+
+	private static final long serialVersionUID = 1L;
 
     @Autowired
     private PositionService positionService;
 
-    @PostMapping
-    public ResponseEntity<String> createPosition(@RequestBody Position position) {
-    	try {
-	        positionService.createPosition(position);
-	        return new ResponseEntity<>("Position created successfully", HttpStatus.CREATED);
-    	} catch (DataIntegrityViolationException e) {
-    		String errorMessage = e.getMessage();
-    		if(errorMessage.contains("Duplicate entry")) {
-    			if(errorMessage.contains("Name")) {
-    				return new ResponseEntity<>("Position Name already exists", HttpStatus.CONFLICT);
-    			} else {
-                    return new ResponseEntity<>("Constraint violation occurred", HttpStatus.CONFLICT);
-                }
-    		} else {
-                return new ResponseEntity<>("Unknown constraint violation", HttpStatus.CONFLICT);
+    private List<Position> allPositions;
+    private Position position;
+    
+    public List<Position> getAllPositions() {
+		return allPositions;
+	}
+
+	public void setAllPositions(List<Position> allPositions) {
+		this.allPositions = allPositions;
+	}
+
+	public Position getPosition() {
+		return position;
+	}
+
+	public void setPosition(Position position) {
+		this.position = position;
+	}
+
+	@PostConstruct
+    public void init() {
+        position = new Position();
+        refreshPositionList();
+    }
+    
+    public void createPosition() {
+        try {
+            positionService.createPosition(position);
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Success", "Position created successfully"));
+            refreshPositionList();
+            position = new Position(); // Clear the form after successful creation
+        } catch (DataIntegrityViolationException e) {
+            handleDuplicateEntryException(e);
+        } catch (Exception e) {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Failed to create position"));
+        }
+    }
+    
+    private void handleDuplicateEntryException(DataIntegrityViolationException e) {
+        String errorMessage = e.getMessage();
+        if (errorMessage.contains("Duplicate entry")) {
+            if (errorMessage.contains("name")) {
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Position Name already exists"));
+            } else {
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Constraint violation occurred"));
             }
-    	}
+        } else {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Unknown constraint violation"));
+        }
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<String> updatePosition(@PathVariable int id, @RequestBody Position position) {
+    public void editPosition(int id) {
         Position existingPosition = positionService.getPositionById(id);
         if (existingPosition == null) {
-            return new ResponseEntity<>("Position not found", HttpStatus.NOT_FOUND);
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Position not found"));
+            return;
         }
-        position.setId(id);
+        try {
+            FacesContext.getCurrentInstance().getExternalContext().redirect("editposition.xhtml?id=" + id);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    
+    public void savePosition() {
         positionService.updatePosition(position);
-        return new ResponseEntity<>("Position updated successfully", HttpStatus.OK);
+        try {
+            FacesContext.getCurrentInstance().getExternalContext().redirect("dashboard.xhtml");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<String> deletePosition(@PathVariable int id) {
-        Position existingPosition = positionService.getPositionById(id);
+    public void deletePosition(int id) {
+    	Position existingPosition = positionService.getPositionById(id);
         if (existingPosition == null) {
-            return new ResponseEntity<>("Position not found", HttpStatus.NOT_FOUND);
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Position not found"));
+            return;
         }
-        positionService.deletePosition(id);
-        return new ResponseEntity<>("Position deleted successfully", HttpStatus.OK);
+        try {
+            positionService.deletePosition(id);
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Success", "Position deleted successfully"));
+            refreshPositionList();
+        } catch (Exception e) {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Failed to delete position"));
+        }
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Position> getPositionById(@PathVariable int id) {
-        Position position = positionService.getPositionById(id);
-        if (position == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-        return new ResponseEntity<>(position, HttpStatus.OK);
+    private void refreshPositionList() {
+        allPositions = positionService.getAllPositions();
     }
-
-    @GetMapping
-    public ResponseEntity<List<Position>> getAllPositions() {
-        List<Position> positions = positionService.getAllPositions();
-        return new ResponseEntity<>(positions, HttpStatus.OK);
+    
+    public Position getPositionById(int id) {
+        return positionService.getPositionById(id);
     }
 }

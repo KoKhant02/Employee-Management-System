@@ -25,8 +25,10 @@ public class ReqRes {
     private String password;
     private List<Employee> employees;
     private Employee employee;
+    private boolean isSuccess;
 	public ReqRes getBody() {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
 }

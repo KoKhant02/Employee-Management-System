@@ -106,7 +106,7 @@
 		<dependency>
 		    <groupId>javax.faces</groupId>
 		    <artifactId>javax.faces-api</artifactId>
-		    <version>2.3</version>
+		    <version>2.2</version>
 		</dependency>
 		<dependency>
 		    <groupId>javax.inject</groupId>
@@ -139,20 +139,6 @@
 		    <artifactId>primefaces</artifactId>
 		    <version>14.0.0</version>
 		</dependency>
-
-
-		
-		<dependency>
-		    <groupId>org.apache.myfaces.core</groupId>
-		    <artifactId>myfaces-impl</artifactId>
-		    <version>2.2.12</version>
-		</dependency>
-		<dependency>
-		    <groupId>org.apache.myfaces.core</groupId>
-		    <artifactId>myfaces-api</artifactId>
-		    <version>2.2.12</version>
-		</dependency>
-	
 		
 		
 		<dependency>
@@ -170,6 +156,8 @@
 		    <artifactId>rewrite-config-prettyfaces</artifactId>
 		    <version>3.4.1.Final</version>
 		</dependency>
+		
+		
 	</dependencies>
 
 	<build>
@@ -187,6 +175,14 @@
 					</excludes>
 				</configuration>
 			</plugin>
+			<plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>3.3.1</version>
+                <configuration>
+                    <failOnMissingWebXml>false</failOnMissingWebXml>
+                </configuration>
+            </plugin>
 		</plugins>
 	</build>
 

@@ -2,87 +2,132 @@ package dat.example.ems.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import dat.example.ems.model.Employee;
 import dat.example.ems.service.EmployeeService;
+import jakarta.annotation.PostConstruct;
+
+import java.io.IOException;
+import java.io.Serializable;
 import java.util.List;
 
+import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
+import javax.faces.context.FacesContext;
 
 @RestController
 @RequestMapping("/employees")
 @ManagedBean
 @SessionScoped
-public class EmployeeController {
+public class EmployeeController  implements Serializable{
 
-    @Autowired
+	private static final long serialVersionUID = 1L;
+
+	@Autowired
     private EmployeeService employeeService;
 
-    @PostMapping
-    public ResponseEntity<String> createEmployee(@RequestBody Employee employee) {
-    	try {
-    		employeeService.createEmployee(employee);
-            return new ResponseEntity<>("Employee created successfully", HttpStatus.CREATED);
-    	} catch (DataIntegrityViolationException e) {
-    		String errorMessage = e.getMessage();
-    		if (errorMessage.contains("Duplicate entry")) {
-                if (errorMessage.contains("Username")) {
-                    return new ResponseEntity<>("Username already exists", HttpStatus.CONFLICT);
-                } else if (errorMessage.contains("Email")) {
-                    return new ResponseEntity<>("Email already exists", HttpStatus.CONFLICT);
-                } else if (errorMessage.contains("Password")) {
-                    return new ResponseEntity<>("Password already exists", HttpStatus.CONFLICT);
-                } else {
-                    return new ResponseEntity<>("Constraint violation occurred", HttpStatus.CONFLICT);
-                }
+    private List<Employee> allEmployees;
+    private Employee employee;
+
+    @PostConstruct
+    public void init() {
+        employee = new Employee();
+        refreshEmployeeList();
+    }
+
+    public List<Employee> getAllEmployees() {
+		return allEmployees;
+	}
+
+	public void setAllEmployees(List<Employee> allEmployees) {
+		this.allEmployees = allEmployees;
+	}
+
+	public Employee getEmployee() {
+		return employee;
+	}
+
+	public void setEmployee(Employee employee) {
+		this.employee = employee;
+	}
+
+	public void createEmployee() {
+        try {
+            employeeService.createEmployee(employee);
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Success", "Employee created successfully"));
+            refreshEmployeeList();
+            employee = new Employee(); // Clear the form after successful creation
+        } catch (DataIntegrityViolationException e) {
+            handleDuplicateEntryException(e);
+        } catch (Exception e) {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Failed to create employee"));
+        }
+    }
+    
+    private void handleDuplicateEntryException(DataIntegrityViolationException e) {
+        String errorMessage = e.getMessage();
+        if (errorMessage.contains("Duplicate entry")) {
+            if (errorMessage.contains("Username")) {
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Username already exists"));
+            } else if (errorMessage.contains("Email")) {
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Email already exists"));
+            } else if (errorMessage.contains("Password")) {
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Password already exists"));
             } else {
-                return new ResponseEntity<>("Unknown constraint violation", HttpStatus.CONFLICT);
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Constraint violation occurred"));
             }
-    	}
-        
-        
+        } else {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Unknown constraint violation"));
+        }
     }
 
-
-    @PutMapping("/{id}")
-    public ResponseEntity<String> updateEmployee(@PathVariable int id, @RequestBody Employee employee) {
+    public void editEmployee(int id) {
         Employee existingEmployee = employeeService.getEmployeeById(id);
         if (existingEmployee == null) {
-            return new ResponseEntity<>("Employee not found", HttpStatus.NOT_FOUND);
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Employee not found"));
+            return;
         }
-        employee.setId(id);
+        try {
+            FacesContext.getCurrentInstance().getExternalContext().redirect("editemployee.xhtml?id=" + id);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    
+    public void saveEmployee() {
         employeeService.updateEmployee(employee);
-        return new ResponseEntity<>("Employee updated successfully", HttpStatus.OK);
+        try {
+            FacesContext.getCurrentInstance().getExternalContext().redirect("dashboard.xhtml");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteEmployee(@PathVariable int id) {
-        Employee existingEmployee = employeeService.getEmployeeById(id);
+    public void deleteEmployee(int id) {
+    	Employee existingEmployee = employeeService.getEmployeeById(id);
         if (existingEmployee == null) {
-            return new ResponseEntity<>("Employee not found", HttpStatus.NOT_FOUND);
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Employee not found"));
+            return;
         }
-        employeeService.deleteEmployee(id);
-        return new ResponseEntity<>("Employee deleted successfully", HttpStatus.OK);
+        try {
+            employeeService.deleteEmployee(id);
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Success", "Employee deleted successfully"));
+            refreshEmployeeList();
+        } catch (Exception e) {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Failed to delete employee"));
+        }
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Employee> getEmployeeById(@PathVariable int id) {
-        Employee employee = employeeService.getEmployeeById(id);
-        if (employee == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-        return new ResponseEntity<>(employee, HttpStatus.OK);
+    private void refreshEmployeeList() {
+        allEmployees = employeeService.getAllEmployees();
+    }
+    
+    public Employee getEmployeeById(int id) {
+        return employeeService.getEmployeeById(id);
     }
 
-    @GetMapping
-    public ResponseEntity<List<Employee>> getAllEmployees() {
-        List<Employee> employees = employeeService.getAllEmployees();
-        return new ResponseEntity<>(employees, HttpStatus.OK);
-    }
     
 }
 
