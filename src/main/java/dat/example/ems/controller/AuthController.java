@@ -1,35 +1,26 @@
 package dat.example.ems.controller;
 
-import java.io.Serializable;
-
-import javax.faces.bean.ManagedBean;
-import javax.faces.bean.SessionScoped;
 import javax.inject.Named;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import dat.example.ems.model.Employee;
 import dat.example.ems.model.ReqRes;
 import dat.example.ems.service.AuthService;
 import jakarta.annotation.PostConstruct;
 
-@Controller
-@ManagedBean(name = "authController")
-@SessionScoped
-public class AuthController implements Serializable{
-
-  private static final long serialVersionUID = 1L;
+@Named(value = "authController")
+public class AuthController{
 
   @Autowired 
   private AuthService authService;
 		 
   private Employee employee;
   private String responseMessage;
-
-  	@PostConstruct
-  	public void init() {
-  		employee = new Employee();
-  	}
+  
+  @PostConstruct
+  public void init() {
+    employee = new Employee();
+  }
   
   	public Employee getEmployee() {
   		return employee;
@@ -53,8 +44,8 @@ public class AuthController implements Serializable{
         signInRequest.setPassword(employee.getPassword());
         ReqRes response = authService.signIn(signInRequest);
         if (response.isSuccess()) {
-            responseMessage = "Sign in successful"; // Or any success message
-            return "dashboard.xhtml"; // Redirect to the dashboard
+            responseMessage = "Sign in successful"; 
+            return "dashboard.xhtml";
         } else {
             responseMessage = "Sign in failed. Please try again."; 
             return null; // Stay on the same page

@@ -16,11 +16,9 @@ import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
+import javax.inject.Named;
 
-@RestController
-@RequestMapping("/employees")
-@ManagedBean
-@SessionScoped
+@Named
 public class EmployeeController  implements Serializable{
 
 	private static final long serialVersionUID = 1L;

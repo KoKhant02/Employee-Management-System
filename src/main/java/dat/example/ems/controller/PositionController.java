@@ -2,8 +2,6 @@ package dat.example.ems.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.web.bind.annotation.*;
-
 import dat.example.ems.model.Position;
 import dat.example.ems.service.PositionService;
 import jakarta.annotation.PostConstruct;
@@ -13,14 +11,10 @@ import java.io.Serializable;
 import java.util.List;
 
 import javax.faces.application.FacesMessage;
-import javax.faces.bean.ManagedBean;
-import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
+import javax.inject.Named;
 
-@RestController
-@RequestMapping("/positions")
-@ManagedBean
-@SessionScoped
+@Named
 public class PositionController  implements Serializable{
 
 	private static final long serialVersionUID = 1L;

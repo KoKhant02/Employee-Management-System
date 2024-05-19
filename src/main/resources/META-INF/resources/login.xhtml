@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:h="http://java.sun.com/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  xmlns:p="http://primefaces.org/ui"
+  xmlns:pe="http://primefaces.org/ui/extensions">
+<h:head>
+  <title>Login</title>
+  <h:outputStylesheet name="/css/login.css" />
+</h:head>
+
+<h:body>
+    <h:form>
+    	<p:panel header="Employee Login Form ">
+    		<h2>Sign In</h2>
+	    	<label>Welcome From EMS</label>
+    		<h:messages /> <!-- Display response message here -->
+	    	<h:panelGrid columns="2" cellpadding="4">
+	        	<h:outputText value="Username:" />
+	        	<h:inputText id="username" value="#{authController.employee.username}" required="true" />
+	        	<h:outputText value="Password:" />
+	       	 	<h:inputSecret type="password" id="password" value="#{authController.employee.password}" required="true" />
+	        	<h:commandButton value="Sign In" action="#{authController.signIn()}" />
+	    	</h:panelGrid>
+    	</p:panel>
+	</h:form>
+
+</h:body>
+</html>
+

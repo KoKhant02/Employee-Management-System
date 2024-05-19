@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
+    <title>Document</title>
+</head>
+<style>
+    html,body{
+        height: 100%;
+        margin: 0;
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+        background: #f3f3f4;
+    }
+a {
+    border: 1px solid rgb(204, 201, 201);
+    border-radius: 50px 50px;
+    padding: 7px 9px 7px 9px;
+    text-decoration: none;
+    color: grey;
+}
+a:hover{
+    background-color: rgb(99, 102, 2401);
+    color: rgb(217, 217, 217);
+}
+a:hover .manage {
+    color: rgb(255, 251, 251);
+}
+.manage {
+    font-weight: bold;
+    color: rgb(99, 102 ,2401);
+    border: none;
+    background: transparent;
+    padding: 0px;
+}
+.manage-field {
+    display: flex;
+    flex-direction: row;
+    justify-content: right;
+}
+button {
+    cursor: pointer;
+}
+.container {
+    margin: 100px;
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: rgba(99,99,99,0.2) 0px 2px 8px 0px;
+    margin-left: 300px;
+    margin-right: 300px;
+    overflow-x: auto;
+}
+hr {
+    border: 1px solid rgb(224, 223, 223);
+}
+table{
+    width: 100%;
+    border-collapse: collapse;
+    text-align: center;
+    
+}
+thead{
+    background: #e5e7eb ;
+    color: rgb(164, 164, 164);
+}
+tbody{
+    position: relative;
+}
+th, td{
+    padding: 10px;
+}
+th:first-child {
+    border-radius: 10px 0px 0px 10px;
+}
+th:last-child{
+    border-radius: 0px 10px 10px 0px;
+}
+tr {
+    padding-top: 5px;
+}
+.add {
+    position: absolute;
+    right: 2px;
+    bottom: 2px;
+    align-items: left;
+    justify-content: left;
+    background: transparent;
+}
+.btn:hover {
+    background:  rgb(99, 102, 2401);
+    color: white;
+    cursor: pointer;
+}
+.heading{
+    position: relative;
+    padding: 5px 0px 5px 0px;
+}
+.add-modal {
+    display: none;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    position: relative;
+    background-color: white;
+    z-index: 1;
+}
+.staff-input {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: left;
+    flex-direction: column;
+    background: #e5e7eb;
+    position: relative;
+    width: 250px;
+    border-radius: 5px;
+    padding: 5px;
+    opacity: 1;
+    z-index: 2;
+}
+.close {
+    position: absolute;
+    right: 12px;
+    top: 15px;
+    color: grey;
+    font-weight: bold;
+    background: transparent;
+    border: 2px solid rgb(99, 102, 2401);
+    border-radius: 4px;
+}
+.jjk {
+    width: fit-content;
+    padding: 10px;
+}
+input {
+    margin: 5px;
+    padding: 10px;
+    border: #e5e7eb;
+    border-radius: 5px;
+}
+.btn{
+    background: transparent;
+    border:2px solid rgb(99, 102, 2401);
+    color: rgb(99, 102, 2401);
+    border-radius: 5px;
+    padding: 5px;
+}
+.add-modal-inner {
+    position: fixed;
+    z-index: 1;
+    vertical-align: center;
+}
+</style>
+<body>
+    <div class="add-modal" id="myModal">
+        <div class="add-modal-inner">
+            <div class="staff-input">
+                <div class="jjk">
+                    <label for="add-head">Add Employee</label>
+                    <button class="close" >x</button>
+                </div>
+                <div class="jjk">
+                    <label for="name">Name</label> <br>
+                    <input type="text" placeholder="Enter Employee Name"> <br>
+                </div>
+                <div class="jjk">
+                    <label for="name">Department</label> <br>
+                    <input type="text" placeholder="Fill the Department Name">
+                </div>
+                <div class="jjk">
+                    <button type="submit" class="btn">Add</button>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+<div class="container">
+    <div class="heading">
+        <head>Employee Management System</head>
+        <button class="add btn" id="openModalBtn"><i class="bi-person-plus" ></i></button>
+    </div><hr>
+    <table>
+        <thead class="header-table">
+            <th>#</th>
+            <th>Name</th>
+            <th>Department</th>
+            <th></th>
+        </thead>
+        <tbody>
+            <tr>
+                <td>1</td>
+                <td>kkl</td>
+                <td>Offshore- 1</td>
+                <td class="manage-field"><button class="manage">Edit</button> <span>/</span> <button class="manage">Delete</button></td>
+            </tr>
+            <tr>
+                <td>1</td>
+                <td>kkl</td>
+                <td>Offshore- 1</td>
+                <td class="manage-field"><button class="manage">Edit</button> <span>/</span> <button class="manage">Delete</button></td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+<script>
+var modal = document.getElementById('myModal');
+
+var btn = document.getElementById("openModalBtn");
+
+var span = document.getElementsByClassName("close")[0];
+
+btn.onclick = function() {
+  modal.style.display = "flex";
+}
+
+span.onclick = function() {
+  modal.style.display = "none";
+}
+
+window.onclick = function(event) {
+  if (event.target == modal) {
+    modal.style.display = "none";
+  }
+}
+
+</script>
+</body>
+</html>

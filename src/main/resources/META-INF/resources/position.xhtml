@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.javax.faces.org/jsf/html"
+      xmlns:f="http://xmlns.javax.faces.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+    <title>Position Management</title>
+</h:head>
+<h:body>
+    <h2>Position Management</h2>
+    
+    <!-- Form to add a new position -->
+    <h:form id="positionForm">
+        <h3>Add New Position</h3>
+        <p>
+            <h:outputLabel for="name" value="Position Name:" />
+            <h:inputText id="name" value="#{positionController.position.name}" required="true" />
+        </p>
+        <p>
+            <h:commandButton value="Add Position" action="#{positionController.createPosition}" />
+        </p>
+    </h:form>
+
+    <!-- Table to display existing positions -->
+    <h3>Existing Positions</h3>
+    <p:dataTable var="pos" value="#{positionController.allPositions}" id="positionTable">
+        <p:column headerText="ID">
+            <h:outputText value="#{pos.id}" />
+        </p:column>
+        <p:column headerText="Position Name">
+            <h:outputText value="#{pos.name}" />
+        </p:column>
+        <p:column headerText="Actions">
+            <h:commandLink value="Edit" action="#{positionController.editPosition(pos.id)}" />
+            <h:commandLink value="Delete" action="#{positionController.deletePosition(pos.id)}" />
+        </p:column>
+    </p:dataTable>
+</h:body>
+</html>

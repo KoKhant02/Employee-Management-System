@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.javax.faces.org/jsf/html"
+      xmlns:f="http://xmlns.javax.faces.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+    <title>Department Management</title>
+</h:head>
+<h:body>
+    <h:form id="departmentForm">
+        <h2>Add Department</h2>
+        <p>
+            <h:outputLabel for="code" value="Code:" />
+            <h:inputText id="code" value="#{departmentController.department.code}" required="true" />
+        </p>
+        <p>
+            <h:outputLabel for="name" value="Name:" />
+            <h:inputText id="name" value="#{departmentController.department.name}" required="true" />
+        </p>
+        <p>
+            <h:commandButton value="Add Department" action="#{departmentController.createOrUpdateDepartment}" />
+        </p>
+    </h:form>
+
+    <h2>Department List</h2>
+    <p:dataTable var="dept" value="#{departmentController.allDepartments}" id="departmentTable">
+        <p:column headerText="ID">
+            <h:outputText value="#{dept.id}" />
+        </p:column>
+        <p:column headerText="Code">
+            <h:outputText value="#{dept.code}" />
+        </p:column>
+        <p:column headerText="Name">
+            <h:outputText value="#{dept.name}" />
+        </p:column>
+        <p:column headerText="Actions">
+            <h:commandLink value="Edit" action="#{departmentController.editDepartment(dept.id)}" />
+            <h:commandLink value="Delete" action="#{departmentController.deleteDepartment(dept.id)}" />
+        </p:column>
+    </p:dataTable>
+    
+    <p>
+        <h:button value="<--- Go back" outcome="dashboard.xhtml" />
+    </p>
+</h:body>
+</html>
