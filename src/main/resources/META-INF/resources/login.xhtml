@@ -12,10 +12,10 @@
 </h:head>
 
 <h:body>
-    <h:form style="background: grey; padding: 10px; width:40%; margin: 0 auto; display: flex; justify-content: center; border-radius: 10px;">
+    <h:form style="background: #e5e7eb; padding: 20px; width:fit-content; margin: 0 auto; display: flex; justify-content: center; border-radius: 10px;">
     	<p:panel header="Employee Login Form ">
-    		<h2>Sign In</h2>
-	    	<label>Welcome From EMS</label>
+    		<h2 style="text-align: center;">Sign In</h2>
+	    	<label style="text-align: center;">Welcome From EMS</label>
     		<h:messages /> 
 	    	<h:panelGrid columns="2" cellpadding="4">
 	        	<h:outputText value="Username:" />
@@ -25,13 +25,24 @@
 	        	<h:commandButton value="Sign In" action="#{authController.signIn()}" />
 	    	</h:panelGrid>
     	</p:panel>
+    	<h:inputHidden id="tokenValue" value="#{authController.token}" />
+    	<h:inputHidden id="refreshToken" value="#{authController.refreshToken}" />
 	</h:form>
 
-	<h:outputScript>
-        if ('#{not empty sessionScope.token}') {
-            localStorage.setItem('token', '#{sessionScope.token}');
-        }
-    </h:outputScript>
+	<h:outputScript rendered="#{not empty authController.token}">
+	    <![CDATA[
+	        var tokenValue = document.getElementById('tokenValue').value;
+	        localStorage.setItem('token', tokenValue);
+	    ]]>
+	</h:outputScript>
+
+	<h:outputScript rendered="#{not empty authController.refreshToken}">
+	    <![CDATA[
+	        var refreshToken = document.getElementById('refreshToken').value;
+	        localStorage.setItem('refreshToken', refreshToken);
+	    ]]>
+	</h:outputScript>
+
     
 </h:body>
 </html>
