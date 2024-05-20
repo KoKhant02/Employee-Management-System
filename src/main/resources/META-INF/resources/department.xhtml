@@ -1,46 +1,52 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
-  	  xmlns:h="http://java.sun.com/jsf/html"
-  	  xmlns:f="http://xmlns.jcp.org/jsf/core"
-  	  xmlns:p="http://primefaces.org/ui"
-  	  xmlns:pe="http://primefaces.org/ui/extensions">
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions">
 
 <h:head>
-    <title>Department Management</title>
+	<title>Department Management</title>
 </h:head>
 <h:body>
-    <h:form>
-	    <p:panel header="Add Employee Form">
-	        <h2>Add Department</h2>
-	        
-            <h:outputLabel for="code" value="Code:" />
-            <h:inputText id="code" value="#{departmentController.department.code}" required="true" />
-        
-            <h:outputLabel for="name" value="Name:" />
-            <h:inputText id="name" value="#{departmentController.department.name}" required="true" />
-        
-            <h:commandButton value="Add Department" action="#{departmentController.createDepartment}" />
-        </p:panel>
-    </h:form>
+	<h:form>
+		<p:panel header="Add Employee Form">
+			<h2>Add Department</h2>
 
-    <h2>Department List</h2>
-    <h:form>
-	    <h:dataTable var="dept" value="#{departmentController.allDepartments}" id="departmentTable">
-	        <h:column headerText="ID">
-	            <h:outputText value="#{dept.id}" />
-	        </h:column>
-	        <h:column headerText="Code">
-	            <h:outputText value="#{dept.code}" />
-	        </h:column>
-	        <h:column headerText="Name">
-	            <h:outputText value="#{dept.name}" />
-	        </h:column>
-	        <h:column headerText="Actions">
-	            <h:commandLink value="Edit" action="#{departmentController.editDepartment(dept.id)}" />
-	            <h:commandLink value="Delete" action="#{departmentController.deleteDepartment(dept.id)}" />
-	        </h:column>
-	    </h:dataTable>
-    </h:form>
+			<h:outputLabel for="code" value="Code:" />
+			<h:inputText id="code"
+				value="#{departmentController.department.code}" required="true" />
+
+			<h:outputLabel for="name" value="Name:" />
+			<h:inputText id="name"
+				value="#{departmentController.department.name}" required="true" />
+
+			<h:commandButton value="Add Department"
+				action="#{departmentController.createDepartment}" />
+		</p:panel>
+	</h:form>
+
+	<h2>Department List</h2>
+	<h:form>
+		<h:dataTable var="dept" value="#{departmentController.allDepartments}"
+			id="departmentTable">
+			<h:column headerText="ID">
+				<h:outputText value="#{dept.id}" />
+			</h:column>
+			<h:column headerText="Code">
+				<h:outputText value="#{dept.code}" />
+			</h:column>
+			<h:column headerText="Name">
+				<h:outputText value="#{dept.name}" />
+			</h:column>
+			<h:column headerText="Actions">
+				<h:commandLink value="Edit"
+					action="#{departmentController.editDepartment(dept.id)}" />
+				<h:commandLink value="Delete"
+					action="#{departmentController.deleteDepartment(dept.id)}" />
+			</h:column>
+		</h:dataTable>
+	</h:form>
 </h:body>
 </html>

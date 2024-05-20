@@ -20,37 +20,37 @@ import java.io.IOException;
 @Component
 public class JWTAuthFIlter extends OncePerRequestFilter {
 
-    @Autowired
-    private JWTUtils jwtUtils;
-    @Autowired
-    private EmployeeService employeeService;
+	@Autowired
+	private JWTUtils jwtUtils;
+	@Autowired
+	private EmployeeService employeeService;
 
-    @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        final String authHeader = request.getHeader("Authorization");
-        final String jwtToken;
-        final String email;
-        
-        if (authHeader == null || authHeader.isBlank()) {
-            filterChain.doFilter(request, response);
-            return;
-        }
-        
-        jwtToken = authHeader.substring(7);
-        email = jwtUtils.extractUsername(jwtToken);
-        if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            UserDetails userDetails = employeeService.loadUserByUsername(email);
+	@Override
+	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+			throws ServletException, IOException {
+		final String authHeader = request.getHeader("Authorization");
+		final String jwtToken;
+		final String email;
 
-            if (jwtUtils.isTokenValid(jwtToken, userDetails)) {
-                SecurityContext securityContext = SecurityContextHolder.createEmptyContext();
-                UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(
-                        userDetails, null, userDetails.getAuthorities()
-                );
-                token.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                securityContext.setAuthentication(token);
-                SecurityContextHolder.setContext(securityContext);
-            }
-        }
-        filterChain.doFilter(request, response);
-    }
+		if (authHeader == null || authHeader.isBlank()) {
+			filterChain.doFilter(request, response);
+			return;
+		}
+
+		jwtToken = authHeader.substring(7);
+		email = jwtUtils.extractUsername(jwtToken);
+		if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+			UserDetails userDetails = employeeService.loadUserByUsername(email);
+
+			if (jwtUtils.isTokenValid(jwtToken, userDetails)) {
+				SecurityContext securityContext = SecurityContextHolder.createEmptyContext();
+				UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(userDetails, null,
+						userDetails.getAuthorities());
+				token.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+				securityContext.setAuthentication(token);
+				SecurityContextHolder.setContext(securityContext);
+			}
+		}
+		filterChain.doFilter(request, response);
+	}
 }

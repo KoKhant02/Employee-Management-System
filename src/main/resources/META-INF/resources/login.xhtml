@@ -1,49 +1,52 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
-  	  xmlns:h="http://java.sun.com/jsf/html"
-  	  xmlns:f="http://xmlns.jcp.org/jsf/core"
-  	  xmlns:p="http://primefaces.org/ui"
-  	  xmlns:pe="http://primefaces.org/ui/extensions">
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions">
 <h:head>
-	  <title>Login</title>
-	  <h:outputStylesheet name="/css/login.css" />
-	  <h:outputScript name="js/auth.js"/>
+	<title>Login</title>
+	<h:outputStylesheet name="/css/login.css" />
+	<h:outputScript name="js/auth.js" />
 </h:head>
 
 <h:body>
-    <h:form style="background: #e5e7eb; padding: 20px; width:fit-content; margin: 0 auto; display: flex; justify-content: center; border-radius: 10px;">
-    	<p:panel header="Employee Login Form ">
-    		<h2 style="text-align: center;">Sign In</h2>
-	    	<label style="text-align: center;">Welcome From EMS</label>
-    		<h:messages /> 
-	    	<h:panelGrid columns="2" cellpadding="4">
-	        	<h:outputText value="Username:" />
-	        	<h:inputText id="username" value="#{authController.employee.username}" required="true" />
-	        	<h:outputText value="Password:" />
-	       	 	<h:inputSecret type="password" id="password" value="#{authController.employee.password}" required="true" />
-	        	<h:commandButton value="Sign In" action="#{authController.signIn()}" />
-	    	</h:panelGrid>
-    	</p:panel>
-    	<h:inputHidden id="tokenValue" value="#{authController.token}" />
-    	<h:inputHidden id="refreshToken" value="#{authController.refreshToken}" />
+	<h:form
+		style="background: #e5e7eb; padding: 20px; width:fit-content; margin: 0 auto; display: flex; justify-content: center; border-radius: 10px;">
+		<p:panel header="Employee Login Form ">
+			<h2 style="text-align: center;">Sign In</h2>
+			<label style="text-align: center;">Welcome From EMS</label>
+			<h:messages />
+			<h:panelGrid columns="2" cellpadding="4">
+				<h:outputText value="Username:" />
+				<h:inputText id="username"
+					value="#{authController.employee.username}" required="true" />
+				<h:outputText value="Password:" />
+				<h:inputSecret type="password" id="password"
+					value="#{authController.employee.password}" required="true" />
+				<h:commandButton value="Sign In" action="#{authController.signIn()}" />
+			</h:panelGrid>
+		</p:panel>
+		<h:inputHidden id="tokenValue" value="#{authController.token}" />
+		<h:inputHidden id="refreshToken"
+			value="#{authController.refreshToken}" />
 	</h:form>
 
 	<h:outputScript rendered="#{not empty authController.token}">
-	    <![CDATA[
+		<![CDATA[
 	        var tokenValue = document.getElementById('tokenValue').value;
 	        localStorage.setItem('token', tokenValue);
 	    ]]>
 	</h:outputScript>
 
 	<h:outputScript rendered="#{not empty authController.refreshToken}">
-	    <![CDATA[
+		<![CDATA[
 	        var refreshToken = document.getElementById('refreshToken').value;
 	        localStorage.setItem('refreshToken', refreshToken);
 	    ]]>
 	</h:outputScript>
 
-    
 </h:body>
 </html>
 

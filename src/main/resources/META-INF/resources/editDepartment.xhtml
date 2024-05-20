@@ -1,26 +1,29 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:h="http://xmlns.javax.faces.org/jsf/html"
-      xmlns:f="http://xmlns.javax.faces.org/jsf/core"
-      xmlns:p="http://primefaces.org/ui">
+	xmlns:h="http://xmlns.javax.faces.org/jsf/html"
+	xmlns:f="http://xmlns.javax.faces.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
 
 <h:head>
-    <title>Edit Department</title>
+	<title>Edit Department</title>
 </h:head>
 <h:body>
-    <h:form id="editDepartmentForm">
-        <h2>Edit Department</h2>
-        <p>
-            <h:outputLabel for="code" value="Code:" />
-            <h:inputText id="code" value="#{departmentController.department.code}" required="true" />
-        </p>
-        <p>
-            <h:outputLabel for="name" value="Name:" />
-            <h:inputText id="name" value="#{departmentController.department.name}" required="true" />
-        </p>
-        <p>
-            <h:commandButton value="Save Changes" action="#{departmentController.saveDepartment}" />
-        </p>
-    </h:form>
+	<h:form id="editDepartmentForm">
+		<h2>Edit Department</h2>
+		<p>
+			<h:outputLabel for="code" value="Code:" />
+			<h:inputText id="code"
+				value="#{departmentController.department.code}" required="true" />
+		</p>
+		<p>
+			<h:outputLabel for="name" value="Name:" />
+			<h:inputText id="name"
+				value="#{departmentController.department.name}" required="true" />
+		</p>
+		<p>
+			<h:commandButton value="Save Changes"
+				action="#{departmentController.saveDepartment}" />
+		</p>
+	</h:form>
 </h:body>
 </html>

@@ -1,44 +1,49 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
-  	  xmlns:h="http://java.sun.com/jsf/html"
-  	  xmlns:f="http://xmlns.jcp.org/jsf/core"
-  	  xmlns:p="http://primefaces.org/ui"
-  	  xmlns:pe="http://primefaces.org/ui/extensions">
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions">
 
 <h:head>
-    <title>Position Management</title>
+	<title>Position Management</title>
 </h:head>
 <h:body>
-    <h2>Position Management</h2>
-    
-    <!-- Form to add a new position -->
-    <h:form id="positionForm">
-    <p:panel header="Add Department Form">
-        <h3>Add New Position</h3>
-        
-        <h:outputLabel for="name" value="Position Name:" />
-        <h:inputText id="name" value="#{positionController.position.name}" required="true" />
-    
-        <h:commandButton value="Add Position" action="#{positionController.createPosition}" />
-    </p:panel>
-    </h:form>
+	<h2>Position Management</h2>
 
-    <!-- Table to display existing positions -->
-    <h3>Existing Positions</h3>
-    <h:form>
-	    <h:dataTable var="pos" value="#{positionController.allPositions}" id="positionTable">
-	        <h:column headerText="ID">
-	            <h:outputText value="#{pos.id}" />
-	        </h:column>
-	        <h:column headerText="Position Name">
-	            <h:outputText value="#{pos.name}" />
-	        </h:column>
-	        <h:column headerText="Actions">
-	            <h:commandLink value="Edit" action="#{positionController.editPosition(pos.id)}" />
-	            <h:commandLink value="Delete" action="#{positionController.deletePosition(pos.id)}" />
-	        </h:column>
-	    </h:dataTable>
-    </h:form>
+	<!-- Form to add a new position -->
+	<h:form id="positionForm">
+		<p:panel header="Add Department Form">
+			<h3>Add New Position</h3>
+
+			<h:outputLabel for="name" value="Position Name:" />
+			<h:inputText id="name" value="#{positionController.position.name}"
+				required="true" />
+
+			<h:commandButton value="Add Position"
+				action="#{positionController.createPosition}" />
+		</p:panel>
+	</h:form>
+
+	<!-- Table to display existing positions -->
+	<h3>Existing Positions</h3>
+	<h:form>
+		<h:dataTable var="pos" value="#{positionController.allPositions}"
+			id="positionTable">
+			<h:column headerText="ID">
+				<h:outputText value="#{pos.id}" />
+			</h:column>
+			<h:column headerText="Position Name">
+				<h:outputText value="#{pos.name}" />
+			</h:column>
+			<h:column headerText="Actions">
+				<h:commandLink value="Edit"
+					action="#{positionController.editPosition(pos.id)}" />
+				<h:commandLink value="Delete"
+					action="#{positionController.deletePosition(pos.id)}" />
+			</h:column>
+		</h:dataTable>
+	</h:form>
 </h:body>
 </html>

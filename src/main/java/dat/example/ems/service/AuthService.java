@@ -13,33 +13,34 @@ import dat.example.ems.model.ReqRes;
 @Service
 public class AuthService {
 
-    @Autowired
-    private EmployeeMapper employeeMapper;
-    @Autowired
-    private JWTUtils jwtUtils;
-    @Autowired
-    private AuthenticationManager authenticationManager;
+	@Autowired
+	private EmployeeMapper employeeMapper;
+	@Autowired
+	private JWTUtils jwtUtils;
+	@Autowired
+	private AuthenticationManager authenticationManager;
 
-    public ReqRes signIn(ReqRes signinRequest){
-        ReqRes response = new ReqRes();
+	public ReqRes signIn(ReqRes signinRequest) {
+		ReqRes response = new ReqRes();
 
-        try {
-            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(signinRequest.getUsername(),signinRequest.getPassword()));
-            var user = employeeMapper.findByUsername(signinRequest.getUsername()).orElseThrow();
-            System.out.println("USER IS: "+ user);
-            var jwt = jwtUtils.generateToken(user);
-            var refreshToken = jwtUtils.generateRefreshToken(new HashMap<>(), user);
-            response.setStatusCode(200);
-            response.setToken(jwt);
-            response.setRefreshToken(refreshToken);
-            response.setExpirationTime("24Hr");
-            response.setMessage("Successfully Signed In");
-        }catch (Exception e){
-            response.setStatusCode(500);
-            response.setError(e.getMessage());
-            e.printStackTrace();
-        }
-        return response;
-    }
+		try {
+			authenticationManager.authenticate(
+					new UsernamePasswordAuthenticationToken(signinRequest.getUsername(), signinRequest.getPassword()));
+			var user = employeeMapper.findByUsername(signinRequest.getUsername()).orElseThrow();
+			System.out.println("USER IS: " + user);
+			var jwt = jwtUtils.generateToken(user);
+			var refreshToken = jwtUtils.generateRefreshToken(new HashMap<>(), user);
+			response.setStatusCode(200);
+			response.setToken(jwt);
+			response.setRefreshToken(refreshToken);
+			response.setExpirationTime("24Hr");
+			response.setMessage("Successfully Signed In");
+		} catch (Exception e) {
+			response.setStatusCode(500);
+			response.setError(e.getMessage());
+			e.printStackTrace();
+		}
+		return response;
+	}
 
 }

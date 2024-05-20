@@ -16,35 +16,35 @@ import javax.annotation.PostConstruct;
 @SessionScoped
 public class AuthController implements Serializable {
 
-    @Autowired 
-    private AuthService authService;
-             
-    private Employee employee;
-    private String token;
-    private String refreshToken;
-    private String responseMessage;
+	@Autowired
+	private AuthService authService;
 
-    @PostConstruct
-    public void init() {
-        employee = new Employee();
-    }
+	private Employee employee;
+	private String token;
+	private String refreshToken;
+	private String responseMessage;
 
-    public Employee getEmployee() {
-        return employee;
-    }
+	@PostConstruct
+	public void init() {
+		employee = new Employee();
+	}
 
-    public void setEmployee(Employee employee) {
-        this.employee = employee;
-    }
+	public Employee getEmployee() {
+		return employee;
+	}
 
-    public String getToken() {
-        return token;
-    }
+	public void setEmployee(Employee employee) {
+		this.employee = employee;
+	}
 
-    public void setToken(String token) {
-        this.token = token;
-    }
-    
+	public String getToken() {
+		return token;
+	}
+
+	public void setToken(String token) {
+		this.token = token;
+	}
+
 	public String getRefreshToken() {
 		return refreshToken;
 	}
@@ -52,35 +52,33 @@ public class AuthController implements Serializable {
 	public void setRefreshToken(String refreshToken) {
 		this.refreshToken = refreshToken;
 	}
-	
-    public String getResponseMessage() {
-        return responseMessage;
-    }
 
-    public void setResponseMessage(String responseMessage) {
-        this.responseMessage = responseMessage;
-    }
-    
-    public String signIn() {
-        ReqRes signInRequest = new ReqRes();
-        signInRequest.setUsername(employee.getUsername());
-        signInRequest.setPassword(employee.getPassword());
-        ReqRes response = authService.signIn(signInRequest);
-        if (response.isSuccess()) {
-            token = response.getToken();
-            refreshToken=response.getRefreshToken();
-            FacesContext.getCurrentInstance().getExternalContext().addResponseCookie("token", token, null);
-            FacesContext.getCurrentInstance().getExternalContext().addResponseCookie("refreshToken", refreshToken, null);
-            System.out.println("token is " + token);
-            System.out.println("SignIn Succeed");
-            return "success"; // Redirect to the dashboard page
-        } else {
-            responseMessage = "Sign in failed. Please try again.";
-            return null; // Stay on the same page
-        }
-    }
+	public String getResponseMessage() {
+		return responseMessage;
+	}
 
+	public void setResponseMessage(String responseMessage) {
+		this.responseMessage = responseMessage;
+	}
 
-    
+	public String signIn() {
+		ReqRes signInRequest = new ReqRes();
+		signInRequest.setUsername(employee.getUsername());
+		signInRequest.setPassword(employee.getPassword());
+		ReqRes response = authService.signIn(signInRequest);
+		if (response.isSuccess()) {
+			token = response.getToken();
+			refreshToken = response.getRefreshToken();
+			FacesContext.getCurrentInstance().getExternalContext().addResponseCookie("token", token, null);
+			FacesContext.getCurrentInstance().getExternalContext().addResponseCookie("refreshToken", refreshToken,
+					null);
+			System.out.println("token is " + token);
+			System.out.println("SignIn Succeed");
+			return "success"; // Redirect to the dashboard page
+		} else {
+			responseMessage = "Sign in failed. Please try again.";
+			return null; // Stay on the same page
+		}
+	}
+
 }
-
