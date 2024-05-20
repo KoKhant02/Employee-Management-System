@@ -37,6 +37,7 @@ public class SecurityConfig {
                 		request -> request
                 		.requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll() // Allow access to static resources
                 		.requestMatchers("/javax.faces.resource/**").permitAll()// Allow JSF resources
+                		.requestMatchers("/login.xhtml", "/login", "/logout", "/public/**").permitAll() // Allow public access to login and public paths
                         .anyRequest().authenticated()
                         )
                 .exceptionHandling(
@@ -47,6 +48,11 @@ public class SecurityConfig {
                         .loginPage("/login.xhtml")
                         .loginProcessingUrl("/login")
                         .defaultSuccessUrl("/dashboard.xhtml")
+                        .successHandler(
+                                (((request, response, authentication) -> {
+                                    response.sendRedirect("/dashboard.xhtml");
+                                }))
+                        )
                         .failureUrl("/login.xhtml?error=true")
                         .permitAll()
                 ).logout(
@@ -56,8 +62,7 @@ public class SecurityConfig {
                         .invalidateHttpSession(true)
                         .permitAll()
                 )
-                .sessionManagement(
-                		manager -> manager
+                .sessionManagement(session -> session
         				.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 				)
                 .authenticationProvider(authenticationProvider())

@@ -5,15 +5,20 @@
     xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee
                         http://xmlns.jcp.org/xml/ns/javaee/web-facesconfig_2_2.xsd"
     version="2.2">
-
+	
+	<managed-bean>
+	    <managed-bean-name>authController</managed-bean-name>
+	    <managed-bean-class>dat.example.ems.controller.AuthController</managed-bean-class>
+	    <managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+    
     <navigation-rule>
         <from-view-id>/login.xhtml</from-view-id>
         <navigation-case>
-            <from-outcome>success</from-outcome>
-            <to-view-id>/dashboard.xhtml</to-view-id>
-            <!-- You can also specify redirects if needed -->
-            <!-- <redirect/> -->
-        </navigation-case>
+		    <from-outcome>success</from-outcome>
+		    <to-view-id>/dashboard.xhtml?faces-redirect=true</to-view-id>
+		</navigation-case>
+		        
     </navigation-rule>
     
     <application>

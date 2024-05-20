@@ -1,58 +1,87 @@
-<!DOCTYPE html>
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:h="http://xmlns.javax.faces.org/jsf/html"
-      xmlns:f="http://xmlns.javax.faces.org/jsf/core"
-      xmlns:p="http://primefaces.org/ui">
+  	  xmlns:h="http://java.sun.com/jsf/html"
+  	  xmlns:f="http://xmlns.jcp.org/jsf/core"
+  	  xmlns:p="http://primefaces.org/ui"
+  	  xmlns:pe="http://primefaces.org/ui/extensions">
 
 <h:head>
     <title>Employee Dashboard</title>
+    <h:outputStylesheet name="/css/dashboard.css"/>
+    <h:outputScript name="js/auth.js"/>
 </h:head>
 <h:body>
-    <h:form id="employeeForm">
-        <h2>Add Employee</h2>
-        <p>
-            <h:outputLabel for="username" value="Username:" />
-            <h:inputText id="username" value="#{employeeController.employee.username}" required="true" />
-        </p>
-        <p>
+    
+	<h:form>
+        <p:panel header="Add Employee Form">
+        	<h2>Add Employee</h2>
+        	<h:outputLabel for="name" value="Name:" />
+            <h:inputText id="name" value="#{employeeController.employee.name}" required="true" />
+        
             <h:outputLabel for="email" value="Email:" />
             <h:inputText id="email" value="#{employeeController.employee.email}" required="true" />
-        </p>
-        <p>
+        
+            <h:outputLabel for="phone" value="Phone:" />
+            <h:inputText id="phone" value="#{employeeController.employee.phone}" required="true" />
+        
+        	<h:outputLabel for="salary" value="Salary:" />
+            <h:inputText id="salary" value="#{employeeController.employee.salary}" required="true" />
+        
+        	<h:outputLabel for="username" value="Username:" />
+            <h:inputText id="username" value="#{employeeController.employee.username}" required="true" />
+        
             <h:outputLabel for="password" value="Password:" />
             <h:inputSecret id="password" value="#{employeeController.employee.password}" required="true" />
-        </p>
-        <p>
+        
+        	<h:outputLabel for="department" value="Department" />
+            <h:inputText id="department" value="#{employeeController.employee.departmentID}" required="true" />
+            
+            <h:outputLabel for="role" value="Role:" />
+            <h:inputText id="role" value="#{employeeController.employee.role}" required="true" />
+            
+            <h:outputLabel for="position" value="Position" />
+            <h:inputText id="position" value="#{employeeController.employee.positions}" required="true" />
+            
             <h:commandButton value="Add Employee" action="#{employeeController.createEmployee}" />
-        </p>
-    </h:form>
 
+        </p:panel>
+    </h:form>
     <h2>Employee List</h2>
-    <p:dataTable var="emp" value="#{employeeController.allEmployees}" id="employeeTable">
-        <p:column headerText="ID">
+<h:form>
+    <h:dataTable var="emp" value="#{employeeController.allEmployees}" id="employeeTable">
+        <h:column>
+            <f:facet name="header">ID</f:facet>
             <h:outputText value="#{emp.id}" />
-        </p:column>
-        <p:column headerText="Username">
+        </h:column>
+        <h:column>
+            <f:facet name="header">Username</f:facet>
             <h:outputText value="#{emp.username}" />
-        </p:column>
-        <p:column headerText="Email">
+        </h:column>
+        <h:column>
+            <f:facet name="header">Email</f:facet>
             <h:outputText value="#{emp.email}" />
-        </p:column>
-        <p:column headerText="Department">
+        </h:column>
+        <h:column>
+            <f:facet name="header">Department</f:facet>
             <h:outputText value="#{emp.department}" />
-        </p:column>
-        <p:column headerText="Email">
+        </h:column>
+        <h:column>
+            <f:facet name="header">Email</f:facet>
             <h:outputText value="#{emp.email}" />
-        </p:column>
-        <p:column headerText="Actions">
+        </h:column>
+        <h:column>
+            <f:facet name="header">Actions</f:facet>
             <h:commandLink value="Edit" action="#{employeeController.editEmployee(emp.id)}" />
             <h:commandLink value="Delete" action="#{employeeController.deleteEmployee(emp.id)}" />
-        </p:column>
-    </p:dataTable>
+        </h:column>
+    </h:dataTable>
+</h:form>
+
     
     <p>
-        <h:button value="Add Departments" outcome="department.xhtml" />
-        <h:button value="Add Positions" outcome="position.xhtml" />
+        <h:button value="Add Departments" outcome="/department.xhtml" />
+        <h:button value="Add Positions" outcome="/position.xhtml" />
     </p>
 </h:body>
 </html>

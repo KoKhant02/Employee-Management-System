@@ -109,7 +109,7 @@ public class ReqRes {
 		this.employee = employee;
 	}
 	public boolean isSuccess() {
-		return isSuccess;
+		return statusCode == 200;
 	}
 	public void setSuccess(boolean isSuccess) {
 		this.isSuccess = isSuccess;

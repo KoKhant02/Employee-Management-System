@@ -2,23 +2,22 @@ package dat.example.ems.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.web.bind.annotation.*;
 
 import dat.example.ems.model.Employee;
 import dat.example.ems.service.EmployeeService;
-import jakarta.annotation.PostConstruct;
 
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.List;
 
+import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
-import javax.inject.Named;
 
-@Named
+@ManagedBean(name = "employeeController")
+@SessionScoped
 public class EmployeeController  implements Serializable{
 
 	private static final long serialVersionUID = 1L;
@@ -34,6 +33,8 @@ public class EmployeeController  implements Serializable{
         employee = new Employee();
         refreshEmployeeList();
     }
+    
+    
 
     public List<Employee> getAllEmployees() {
 		return allEmployees;
@@ -51,19 +52,6 @@ public class EmployeeController  implements Serializable{
 		this.employee = employee;
 	}
 
-	public void createEmployee() {
-        try {
-            employeeService.createEmployee(employee);
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Success", "Employee created successfully"));
-            refreshEmployeeList();
-            employee = new Employee(); // Clear the form after successful creation
-        } catch (DataIntegrityViolationException e) {
-            handleDuplicateEntryException(e);
-        } catch (Exception e) {
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Failed to create employee"));
-        }
-    }
-    
     private void handleDuplicateEntryException(DataIntegrityViolationException e) {
         String errorMessage = e.getMessage();
         if (errorMessage.contains("Duplicate entry")) {
@@ -80,7 +68,27 @@ public class EmployeeController  implements Serializable{
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Unknown constraint violation"));
         }
     }
-
+    
+	public String createEmployee() {
+		employeeService.createEmployee(employee);
+        try {
+        	System.out.println("Employee Added");
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Success", "Employee created successfully"));
+            refreshEmployeeList();
+            employee = new Employee(); // Clear the form after successful creation
+            return "dashboard.xhtml?faces-redirect=true";
+        } catch (DataIntegrityViolationException e) {
+        	System.out.println("Employee Data Duplicating!");
+            handleDuplicateEntryException(e);
+            
+        } catch (Exception e) {
+        	System.out.println("Failed to add Employee!");
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Failed to create employee"));
+            
+        }
+        return null;
+    }
+	
     public void editEmployee(int id) {
         Employee existingEmployee = employeeService.getEmployeeById(id);
         if (existingEmployee == null) {

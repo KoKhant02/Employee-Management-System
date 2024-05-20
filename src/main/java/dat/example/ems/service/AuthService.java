@@ -37,6 +37,7 @@ public class AuthService {
         }catch (Exception e){
             response.setStatusCode(500);
             response.setError(e.getMessage());
+            e.printStackTrace();
         }
         return response;
     }
