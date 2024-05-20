@@ -3,20 +3,26 @@ package dat.example.ems.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 
+import dat.example.ems.model.Department;
 import dat.example.ems.model.Employee;
+import dat.example.ems.model.Position;
+import dat.example.ems.service.DepartmentService;
 import dat.example.ems.service.EmployeeService;
+import dat.example.ems.service.PositionService;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
-import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
+import javax.faces.model.SelectItem;
+import javax.inject.Named;
 
-@ManagedBean(name = "employeeController")
+@Named
 @SessionScoped
 public class EmployeeController  implements Serializable{
 
@@ -24,14 +30,24 @@ public class EmployeeController  implements Serializable{
 
 	@Autowired
     private EmployeeService employeeService;
+	@Autowired
+    private DepartmentService departmentService;
+	@Autowired
+    private PositionService positionService;
 
     private List<Employee> allEmployees;
     private Employee employee;
+    private List<Department> deptList;
+    private Department department;
+    private List<Position> positionList;
+    private Position position;
 
     @PostConstruct
     public void init() {
         employee = new Employee();
         refreshEmployeeList();
+        deptList = departmentService.getDeptList();
+        positionList = positionService.getPositionList();
     }
     
     
@@ -52,6 +68,38 @@ public class EmployeeController  implements Serializable{
 		this.employee = employee;
 	}
 
+
+	public List<Department> getDeptList() {
+		return deptList;
+	}
+
+	public void setDeptList(List<Department> deptList) {
+		this.deptList = deptList;
+	}
+	
+	public Department getDepartment() {
+		return department;
+	}
+	
+	public void setDepartment(Department department) {
+		this.department = department;
+	}
+
+	public List<Position> getPositionList() {
+		return positionList;
+	}
+
+	public void setPositionList(List<Position> positionList) {
+		this.positionList = positionList;
+	}
+
+	public Position getPosition() {
+		return position;
+	}
+
+	public void setPosition(Position position) {
+		this.position = position;
+	}
     private void handleDuplicateEntryException(DataIntegrityViolationException e) {
         String errorMessage = e.getMessage();
         if (errorMessage.contains("Duplicate entry")) {
@@ -134,6 +182,30 @@ public class EmployeeController  implements Serializable{
         return employeeService.getEmployeeById(id);
     }
 
-    
+    public List<SelectItem> getDeptNames() {
+        List<SelectItem> deptNames = new ArrayList<>();
+        for (Department department : deptList) {
+            deptNames.add(new SelectItem(department.getId(), department.getName()));
+        }
+        return deptNames;
+    }
+
+    public List<SelectItem> getPositionNames() {
+        List<SelectItem> positionNames = new ArrayList<>();
+        for (Position position : positionList) {
+        	positionNames.add(new SelectItem(position.getId(), position.getName()));
+        }
+        return positionNames;
+    }
+
+    public String getPositionNames(Employee employee) {
+        List<String> positionNames = new ArrayList<>();
+        for (Position position : employee.getPositions()) {
+            positionNames.add(position.getName());
+        }
+        return String.join(", ", positionNames);
+    }
+
+
 }
 

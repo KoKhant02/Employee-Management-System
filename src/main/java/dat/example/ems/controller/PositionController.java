@@ -11,20 +11,28 @@ import java.io.Serializable;
 import java.util.List;
 
 import javax.faces.application.FacesMessage;
+import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
 import javax.inject.Named;
 
 @Named
+@SessionScoped
 public class PositionController  implements Serializable{
 
 	private static final long serialVersionUID = 1L;
 
     @Autowired
     private PositionService positionService;
-
+    
     private List<Position> allPositions;
     private Position position;
     
+	@PostConstruct
+    public void init() {
+        position = new Position();
+        refreshPositionList();
+    }
+	
     public List<Position> getAllPositions() {
 		return allPositions;
 	}
@@ -41,13 +49,7 @@ public class PositionController  implements Serializable{
 		this.position = position;
 	}
 
-	@PostConstruct
-    public void init() {
-        position = new Position();
-        refreshPositionList();
-    }
-    
-    public void createPosition() {
+	public void createPosition() {
         try {
             positionService.createPosition(position);
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Success", "Position created successfully"));

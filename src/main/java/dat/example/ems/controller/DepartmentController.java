@@ -13,12 +13,12 @@ import java.io.Serializable;
 import java.util.List;
 
 import javax.faces.application.FacesMessage;
-import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
 import javax.inject.Named;
 
 @Named
+@SessionScoped
 public class DepartmentController  implements Serializable{
 
 	private static final long serialVersionUID = 1L;
@@ -30,6 +30,13 @@ public class DepartmentController  implements Serializable{
     private List<Department> allDepartments;
     private Department department;
     
+	@PostConstruct
+    public void init() {
+        department = new Department();
+        refreshDepartmentList();
+        
+    }
+	
     public List<Department> getAllDepartments() {
 		return allDepartments;
 	}
@@ -46,11 +53,7 @@ public class DepartmentController  implements Serializable{
 		this.department = department;
 	}
 
-	@PostConstruct
-    public void init() {
-        department = new Department();
-        refreshDepartmentList();
-    }
+
 
     public void createDepartment() {
         try {
@@ -121,9 +124,12 @@ public class DepartmentController  implements Serializable{
         allDepartments = departmentService.getAllDepartments();
     }
     
+
+    
     public Department getDepartmentById(int id) {
         return departmentService.getDepartmentById(id);
     }
+
     
 }
 

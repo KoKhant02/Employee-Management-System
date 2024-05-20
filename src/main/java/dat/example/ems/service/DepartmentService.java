@@ -33,4 +33,8 @@ public class DepartmentService {
     public List<Department> getAllDepartments() {
         return departmentMapper.findAll();
     }
+    
+    public List<Department> getDeptList() {
+        return departmentMapper.getDeptList();
+    }
 }

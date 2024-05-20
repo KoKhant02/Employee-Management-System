@@ -29,4 +29,7 @@ public interface DepartmentMapper {
     
     @Select("SELECT * FROM Department")
     List<Department> findAll();
+    
+    @Select("SELECT id, name FROM Department")
+    List<Department> getDeptList();
 }

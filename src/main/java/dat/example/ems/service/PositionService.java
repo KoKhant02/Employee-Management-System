@@ -33,4 +33,8 @@ public class PositionService {
     public List<Position> getAllPositions() {
         return positionMapper.findAll();
     }
+    
+    public List<Position> getPositionList() {
+        return positionMapper.positionList();
+    }
 }

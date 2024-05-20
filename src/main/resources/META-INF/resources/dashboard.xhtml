@@ -12,76 +12,86 @@
     <h:outputScript name="js/auth.js"/>
 </h:head>
 <h:body>
-    
-	<h:form>
-        <p:panel header="Add Employee Form">
-        	<h2>Add Employee</h2>
-        	<h:outputLabel for="name" value="Name:" />
-            <h:inputText id="name" value="#{employeeController.employee.name}" required="true" />
-        
-            <h:outputLabel for="email" value="Email:" />
-            <h:inputText id="email" value="#{employeeController.employee.email}" required="true" />
-        
-            <h:outputLabel for="phone" value="Phone:" />
-            <h:inputText id="phone" value="#{employeeController.employee.phone}" required="true" />
-        
-        	<h:outputLabel for="salary" value="Salary:" />
-            <h:inputText id="salary" value="#{employeeController.employee.salary}" required="true" />
-        
-        	<h:outputLabel for="username" value="Username:" />
-            <h:inputText id="username" value="#{employeeController.employee.username}" required="true" />
-        
-            <h:outputLabel for="password" value="Password:" />
-            <h:inputSecret id="password" value="#{employeeController.employee.password}" required="true" />
-        
-        	<h:outputLabel for="department" value="Department" />
-            <h:inputText id="department" value="#{employeeController.employee.departmentID}" required="true" />
-            
-            <h:outputLabel for="role" value="Role:" />
-            <h:inputText id="role" value="#{employeeController.employee.role}" required="true" />
-            
-            <h:outputLabel for="position" value="Position" />
-            <h:inputText id="position" value="#{employeeController.employee.positions}" required="true" />
-            
-            <h:commandButton value="Add Employee" action="#{employeeController.createEmployee}" />
-
-        </p:panel>
-    </h:form>
-    <h2>Employee List</h2>
-<h:form>
-    <h:dataTable var="emp" value="#{employeeController.allEmployees}" id="employeeTable">
-        <h:column>
-            <f:facet name="header">ID</f:facet>
-            <h:outputText value="#{emp.id}" />
-        </h:column>
-        <h:column>
-            <f:facet name="header">Username</f:facet>
-            <h:outputText value="#{emp.username}" />
-        </h:column>
-        <h:column>
-            <f:facet name="header">Email</f:facet>
-            <h:outputText value="#{emp.email}" />
-        </h:column>
-        <h:column>
-            <f:facet name="header">Department</f:facet>
-            <h:outputText value="#{emp.department}" />
-        </h:column>
-        <h:column>
-            <f:facet name="header">Email</f:facet>
-            <h:outputText value="#{emp.email}" />
-        </h:column>
-        <h:column>
-            <f:facet name="header">Actions</f:facet>
-            <h:commandLink value="Edit" action="#{employeeController.editEmployee(emp.id)}" />
-            <h:commandLink value="Delete" action="#{employeeController.deleteEmployee(emp.id)}" />
-        </h:column>
-    </h:dataTable>
-</h:form>
-
-    
-    <p>
-        <h:button value="Add Departments" outcome="/department.xhtml" />
-        <h:button value="Add Positions" outcome="/position.xhtml" />
-    </p>
+    <div style="margin: 10px">
+		<h:form style="background: grey; padding: 10px; width:40%; margin: 0 auto; display: flex; justify-content: center; border-radius: 10px;">
+	        <p:panel header="Add Employee Form">
+	        	<h2>Add Employee</h2>
+	        	<p style="width:70%">
+		        	<h:outputLabel for="name" value="Name:" />
+		            <h:inputText id="name" value="#{employeeController.employee.name}" required="true" />
+	        	</p>
+	        	<p style="width:70%">
+		            <h:outputLabel for="email" value="Email:" />
+		            <h:inputText id="email" value="#{employeeController.employee.email}" required="true" />
+	        	</p>
+	        	<p style="width:70%">
+		            <h:outputLabel for="phone" value="Phone:" />
+		            <h:inputText id="phone" value="#{employeeController.employee.phone}" required="true" />
+	        	</p>
+	        	<p style="width:70%">
+		        	<h:outputLabel for="salary" value="Salary:" />
+		            <h:inputText id="salary" value="#{employeeController.employee.salary}" required="true" />
+	        	</p>
+	        	<p style="width:70%">
+		        	<h:outputLabel for="username" value="Username:" />
+		            <h:inputText id="username" value="#{employeeController.employee.username}" required="true" />
+	        	</p>
+	        	<p style="width:70%">
+		            <h:outputLabel for="password" value="Password:" />
+		            <h:inputSecret id="password" value="#{employeeController.employee.password}" required="true" />
+	        	</p>
+	        	<p style="width:70%">
+		        	<h:outputLabel for="department" value="Department" />
+					<h:selectOneMenu id="department" value="#{employeeController.deptList}" required="true">
+					    <f:selectItems value="#{employeeController.deptNames}" />
+					</h:selectOneMenu>
+				</p>
+	            <p style="width:70%">
+		            <h:outputLabel for="role" value="Role:" />
+		            <h:inputText id="role" value="#{employeeController.employee.role}" required="true" />
+	            </p>
+	            <p style="width:70%">
+		            <h:outputLabel for="positions" value="Positions" />
+					<h:selectManyCheckbox id="positions" value="#{employeeController.positionList}" layout="pageDirection">
+					    <f:selectItems value="#{employeeController.positionNames}" />
+					</h:selectManyCheckbox>
+		            <h:commandButton value="Add Employee" action="#{employeeController.createEmployee}" />
+				</p>
+	        </p:panel>
+	    </h:form>
+    </div>
+    <div style="margin 10px;">
+		<h:form style="border: 1px solid black; margin: 0 auto; display: flex; justify-content: center; border-radius: 10px; width:80%">
+		    <h:dataTable var="emp" value="#{employeeController.allEmployees}" id="employeeTable" style="width:100%; text-align:center;">
+		        <h:column>
+		            <f:facet name="header">ID</f:facet>
+		            <h:outputText value="#{emp.id}" />
+		        </h:column>
+		        <h:column>
+		            <f:facet name="header">Username</f:facet>
+		            <h:outputText value="#{emp.username}" />
+		        </h:column>
+		        <h:column style="width:fit-content;">
+		            <f:facet name="header">Email</f:facet>
+		            <h:outputText value="#{emp.email}" />
+		        </h:column>
+		        <h:column>
+		            <f:facet name="header">Department</f:facet>
+		            <h:outputText value="#{emp.departmentName}" />
+		        </h:column>
+		        <h:column>
+				    <f:facet name="header">Positions</f:facet>
+				    <h:outputText value="#{employeeController.getPositionNames(emp)}" />
+				</h:column>
+	
+		        
+		        <h:column>
+		            <f:facet name="header">Actions</f:facet>
+		            <h:commandLink value="Edit" action="#{employeeController.editEmployee(emp.id)}" />
+		            <h:commandLink value="Delete" action="#{employeeController.deleteEmployee(emp.id)}" />
+		        </h:column>
+		    </h:dataTable>
+		</h:form>	
+	</div>
 </h:body>
 </html>

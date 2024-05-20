@@ -27,4 +27,7 @@ public interface PositionMapper {
     
     @Select("SELECT * FROM Positions")
     List<Position> findAll();
+    
+    @Select("SELECT id, name FROM Positions")
+    List<Position> positionList();
 }
